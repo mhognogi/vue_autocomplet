@@ -1,0 +1,78 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/collect.js/4.2.2/collect.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vue-toasted"></script>
+<span id="cautaClient" v-cloak>
+    <input type="hidden" v-model="idClientSelectat" name="DENUMIRE_PRODUS">
+     Produs
+    <input v-model="selClient" v-on:keyup="cautaClient()" type="text" placeholder="minim 4 caractere" class="input_text" style="width: 200px;">
+    <ul class="listaClienti">
+        <li v-for="client in clientS">
+            <a v-on:click="clientSelectat(client.id, client.nume)">
+                <b> {{ client.nume }} </b>
+            </a>
+        </li>
+    </ul>
+</span>
+
+<script>
+    Vue.use(Toasted);
+
+    var frm = new Vue({
+        el: '#cautaClient',
+        data: {
+            clientS:[],
+            selClient: null,
+            minCharSearch: 4,
+            idClientSelectat: 111,
+        },
+        methods: {
+            clientSelectat(idClient, numeClient){
+                this.idClientSelectat = idClient;
+                this.selClient = numeClient;
+                this.clientS = [];
+            },
+            cons_log(){
+                console.log(this.clientS);
+            },
+            cautaClient() {
+                let q_client = this.selClient;
+
+                //daca nu am minimul de caractere return
+                if(q_client == null || q_client.length < this.minCharSearch) {
+                    this.clientS = [];
+                    return;
+                }
+
+                axios.get('cauta_stoc_ajax.php?q=' + q_client)
+                    .then(response => (this.clientS = response.data));
+            },
+        },
+        beforeMount: function(){
+            //this.selClient = 'regi';
+        },
+    });
+</script>
+
+<style>
+    .listaClienti > li > a > span{
+        font-weight: bolder;
+        color: #566cff;
+    }
+    .listaClienti > li > a{
+        cursor: pointer;
+    }
+    .listaClienti > li{
+        background: #eee;
+        padding: 3px 7px 3px 7px;
+        border-bottom: 1px solid #ddd;
+        font-size: 12px;
+        color: #777;
+    ;
+    }
+    .listaClienti{
+        list-style-type: none;
+        padding: 0px !important;
+        margin-top: 0px;
+    }
+</style>
