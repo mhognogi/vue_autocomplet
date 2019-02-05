@@ -44,7 +44,7 @@
                     return;
                 }
 
-                axios.get('cauta_stoc_ajax.php?q=' + q_client)
+                axios.get('cauta_ajax.php?qsafgd=' + q_client)
                     .then(response => (this.clientS = response.data));
             },
         },
